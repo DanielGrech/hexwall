@@ -46,10 +46,10 @@ android {
 
         buildConfigField "boolean", "CRASHLYTICS_ENABLED", "${isCiBuild()}"
         buildConfigField "boolean", "LEAK_CANARY_ENABLED", "${!isCiBuild()}"
-
         buildConfigField "String", "BUILD_TIME", "\"${getBuildTime()}\""
         buildConfigField "String", "GIT_SHA", "\"${getGitSha()}\""
         buildConfigField "String", "BUILD_NUMBER", "\"${getCiBuildNumber()}\""
+        buildConfigField "String", "SUPPORT_EMAIL", "\"dgsoftwaredevelopment@gmail.com\""
     }
 
     buildTypes {
@@ -124,12 +124,12 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile "com.android.support:appcompat-v7:${versions.androidSupport}"
     compile "com.android.support:support-v4:${versions.androidSupport}"
-    compile "com.android.support:recyclerview-v7:${versions.androidSupport}"
+    compile "com.android.support:preference-v14:${versions.androidSupport}"
     compile "com.google.dagger:dagger:${versions.dagger}"
     compile "com.jakewharton.timber:timber:${versions.timber}"
     compile "javax.annotation:jsr250-api:${versions.jsr250}"
     compile "com.facebook.stetho:stetho-timber:${versions.stetho}"
-
+    compile "de.psdev.licensesdialog:licensesdialog:${versions.licensesDialog}"
     compile("com.crashlytics.sdk.android:crashlytics:${versions.fabricClient}") {
         transitive = true;
     }

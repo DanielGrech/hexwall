@@ -77,6 +77,11 @@ public class IntentUtils {
         return new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
     }
 
+    public static Intent getEmailIntent(String email, String subject) {
+        return new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", email, null))
+                .putExtra(Intent.EXTRA_SUBJECT, subject);
+    }
+
     /**
      * Query the package manager with the given intent
      *
