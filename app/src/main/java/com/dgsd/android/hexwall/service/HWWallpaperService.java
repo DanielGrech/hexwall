@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
@@ -19,6 +20,7 @@ public class HWWallpaperService extends WallpaperService {
 
     private static final long DELAY_BETWEEN_FRAMES = 1000; //ms
     private static final long COLOR_CHANGE_ANIM_DURATION = 200; //ms
+    private static final int OPAQUE = 255;
 
     @Override
     public Engine onCreateEngine() {
@@ -113,18 +115,19 @@ public class HWWallpaperService extends WallpaperService {
         private int getNextTargetColor() {
             time.setTimeInMillis(System.currentTimeMillis());
             final int color = Color.rgb(
-                    getTimeFraction(time.get(Calendar.HOUR_OF_DAY), 24),
-                    getTimeFraction(time.get(Calendar.MINUTE), 60),
-                    getTimeFraction(time.get(Calendar.SECOND), 60)
+                    getTimeFraction(time.get(Calendar.HOUR_OF_DAY), (int) TimeUnit.DAYS.toHours(1)),
+                    getTimeFraction(time.get(Calendar.MINUTE), (int) TimeUnit.HOURS.toMinutes(1)),
+                    getTimeFraction(time.get(Calendar.SECOND), (int) TimeUnit.MINUTES.toSeconds(1))
             );
 
             Timber.d("Setting color: %s", Integer.toHexString(color));
+
             return color;
         }
 
         private int getTimeFraction(int value, int maxValue) {
             float percentageDone = (1f * value) / maxValue;
-            return (int) (percentageDone * 255);
+            return (int) (percentageDone * OPAQUE);
         }
 
         private class ColorAnimInfo {

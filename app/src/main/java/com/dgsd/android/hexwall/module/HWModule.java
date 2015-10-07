@@ -3,16 +3,10 @@ package com.dgsd.android.hexwall.module;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import com.dgsd.android.hexwall.HWApp;
-import com.dgsd.android.hexwall.data.AppSettings;
-import com.lacronicus.easydatastorelib.DatastoreBuilder;
 
+import com.dgsd.android.hexwall.HWApp;
 import com.squareup.leakcanary.RefWatcher;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -50,11 +44,5 @@ public class HWModule {
     @Singleton
     SharedPreferences providesSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    @Provides
-    @Singleton
-    AppSettings providesAppSettings(SharedPreferences prefs) {
-        return new DatastoreBuilder(prefs).create(AppSettings.class);
     }
 }

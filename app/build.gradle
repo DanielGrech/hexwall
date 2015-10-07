@@ -126,18 +126,10 @@ dependencies {
     compile "com.android.support:support-v4:${versions.androidSupport}"
     compile "com.android.support:recyclerview-v7:${versions.androidSupport}"
     compile "com.google.dagger:dagger:${versions.dagger}"
-    compile "uk.co.chrisjenx:calligraphy:${versions.calligraphy}"
     compile "com.jakewharton.timber:timber:${versions.timber}"
-    compile "com.jakewharton:butterknife:${versions.butterknife}"
     compile "javax.annotation:jsr250-api:${versions.jsr250}"
     compile "com.facebook.stetho:stetho-timber:${versions.stetho}"
-    compile "com.lacronicus:easydatastorelib:${versions.easyDataStore}"
 
-    compile "io.reactivex:rxandroid:${versions.rxAndroid}"
-    compile "com.jakewharton.rxbinding:rxbinding:${versions.rxBinding}"
-    compile "com.jakewharton.rxbinding:rxbinding-support-v4:${versions.rxBinding}"
-    compile "com.jakewharton.rxbinding:rxbinding-recyclerview-v7:${versions.rxBinding}"
-    compile "com.trello:rxlifecycle:${versions.rxLifecycle}"
     compile("com.crashlytics.sdk.android:crashlytics:${versions.fabricClient}") {
         transitive = true;
     }

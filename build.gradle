@@ -19,7 +19,6 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 }
 
@@ -56,14 +55,7 @@ subprojects {
 
         versions = [
                 androidSupport : "23.0.1",
-                rxAndroid : "1.0.1",
-                rxBinding : "0.3.0-SNAPSHOT",
-                rxLifecycle : "0.3.0",
-                calligraphy : "2.1.0",
-                easyDataStore : "1.0.2",
-                rxJava : "1.0.14",
                 timber : "3.1.0",
-                butterknife : "7.0.1",
                 jsr250 : "1.0",
                 fabricClient : "2.5.2@aar",
                 stetho : "1.2.0",
@@ -74,8 +66,6 @@ subprojects {
                 robolectric : "3.0",
                 junit : "4.12",
                 assertJ : "1.7.1",
-                espresso : "2.2",
-                esspressoSupport : "0.3",
 
         ]
     }
