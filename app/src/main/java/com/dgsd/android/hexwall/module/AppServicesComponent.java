@@ -1,5 +1,7 @@
 package com.dgsd.android.hexwall.module;
 
+import android.content.SharedPreferences;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -11,4 +13,5 @@ import dagger.Component;
 @Component(modules = HWModule.class)
 public interface AppServicesComponent {
 
+    SharedPreferences sharedPreferences();
 }

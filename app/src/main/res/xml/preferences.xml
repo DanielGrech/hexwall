@@ -2,6 +2,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
+        android:key="@string/settings_cat_key_background"
+        android:title="@string/settings_cat_title_background">
+
+        <ListPreference
+            android:key="@string/settings_key_color_change_duration"
+            android:title="@string/settings_title_color_change_duration"
+            android:summary="@string/settings_summary_color_change_duration"
+            android:entries="@array/settings_entries_color_change_duration"
+            android:entryValues="@array/settings_entry_values_color_change_duration"
+            android:defaultValue="1000"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="@string/settings_cat_key_about"
         android:title="@string/settings_cat_title_about">
 

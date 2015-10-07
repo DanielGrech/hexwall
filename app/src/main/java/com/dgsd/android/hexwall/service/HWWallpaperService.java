@@ -3,12 +3,16 @@ package com.dgsd.android.hexwall.service;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
+
+import com.dgsd.android.hexwall.HWApp;
+import com.dgsd.android.hexwall.R;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -18,16 +22,23 @@ import timber.log.Timber;
 
 public class HWWallpaperService extends WallpaperService {
 
-    private static final long DELAY_BETWEEN_FRAMES = 1000; //ms
-    private static final long COLOR_CHANGE_ANIM_DURATION = 200; //ms
+    private static final long DEFAULT_COLOR_CHANGE_ANIM_DURATION = 200; //ms
     private static final int OPAQUE = 255;
+
+    private HWEngine engine;
 
     @Override
     public Engine onCreateEngine() {
-        return new HWEngine();
+        final HWApp app = (HWApp) getApplication();
+        engine = new HWEngine(app.getAppServicesComponent().sharedPreferences());
+        return engine;
     }
 
-    private class HWEngine extends WallpaperService.Engine implements Runnable {
+
+    private class HWEngine extends WallpaperService.Engine
+            implements Runnable, SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private final SharedPreferences sharedPreferences;
 
         private final Paint paint;
 
@@ -35,11 +46,18 @@ public class HWWallpaperService extends WallpaperService {
 
         private final ArgbEvaluator argbEvaluator;
 
-        private ColorAnimInfo colorAnimInfo;
-
         private final Calendar time;
 
-        private HWEngine() {
+        private ColorAnimInfo colorAnimInfo;
+
+        private long delayBetweenFrames = TimeUnit.SECONDS.toMillis(1);
+
+        private HWEngine(SharedPreferences sharedPreferences) {
+            this.sharedPreferences = sharedPreferences;
+            this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+            ensureDelayBetweenFrames();
+
             paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
             paint.setStyle(Paint.Style.FILL);
 
@@ -47,7 +65,7 @@ public class HWWallpaperService extends WallpaperService {
 
             handler = new Handler();
 
-            handler.postDelayed(this, DELAY_BETWEEN_FRAMES);
+            handler.post(this);
 
             time = GregorianCalendar.getInstance();
         }
@@ -60,13 +78,13 @@ public class HWWallpaperService extends WallpaperService {
             }
 
             invalidate();
-            handler.postDelayed(this, DELAY_BETWEEN_FRAMES);
+            handler.postDelayed(this, delayBetweenFrames);
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
-                handler.postDelayed(this, DELAY_BETWEEN_FRAMES);
+                handler.post(this);
             } else {
                 removeCallbacks();
             }
@@ -78,7 +96,15 @@ public class HWWallpaperService extends WallpaperService {
             super.onSurfaceDestroyed(holder);
         }
 
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (getString(R.string.settings_key_color_change_duration).equals(key)) {
+                ensureDelayBetweenFrames();
+            }
+        }
+
         private void removeCallbacks() {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
             handler.removeCallbacks(this);
             if (colorAnimInfo != null) {
                 if (colorAnimInfo.currentAnim != null) {
@@ -130,6 +156,16 @@ public class HWWallpaperService extends WallpaperService {
             return (int) (percentageDone * OPAQUE);
         }
 
+        private void ensureDelayBetweenFrames() {
+            final String delayAsString = sharedPreferences.getString(
+                    getString(R.string.settings_key_color_change_duration), String.valueOf(delayBetweenFrames));
+            try {
+                delayBetweenFrames = Long.valueOf(delayAsString);
+            } catch (NullPointerException | NumberFormatException ex) {
+                Timber.e(ex, "Error converting delay between background changes: %s", delayAsString);
+            }
+        }
+
         private class ColorAnimInfo {
             final Integer startColor;
             final Integer endColor;
@@ -176,7 +212,7 @@ public class HWWallpaperService extends WallpaperService {
 
                     }
                 });
-                currentAnim.setDuration(Math.min(COLOR_CHANGE_ANIM_DURATION, DELAY_BETWEEN_FRAMES / 2));
+                currentAnim.setDuration(Math.min(DEFAULT_COLOR_CHANGE_ANIM_DURATION, delayBetweenFrames / 2));
                 currentAnim.start();
             }
         }
