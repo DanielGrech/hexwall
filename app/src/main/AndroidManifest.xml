@@ -15,12 +15,29 @@
             android:name="com.crashlytics.ApiKey"
             android:value="3673ac847cb74e5dd32f851f506aae9e67807837" />
 
+        <service
+            android:name=".service.HWWallpaperService"
+            android:permission="android.permission.BIND_WALLPAPER" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" >
+            </meta-data>
+        </service>
+
         <activity android:name=".activity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activity.SettingsActivity"
+            android:exported="true" />
 
     </application>
 
