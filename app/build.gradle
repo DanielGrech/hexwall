@@ -44,8 +44,6 @@ android {
                 "useLargeHeap" : "${isCiBuild()}"
         ]
 
-        buildConfigField "boolean", "CRASHLYTICS_ENABLED", "${isCiBuild()}"
-        buildConfigField "boolean", "LEAK_CANARY_ENABLED", "${!isCiBuild()}"
         buildConfigField "String", "BUILD_TIME", "\"${getBuildTime()}\""
         buildConfigField "String", "GIT_SHA", "\"${getGitSha()}\""
         buildConfigField "String", "BUILD_NUMBER", "\"${getCiBuildNumber()}\""

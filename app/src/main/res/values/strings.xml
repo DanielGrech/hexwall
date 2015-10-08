@@ -6,6 +6,7 @@
     <string name="settings_cat_key_background">settings_cat_key_background</string>
     <string name="settings_cat_title_background">Background</string>
     <string name="settings_key_color_change_duration">settings_key_color_change_duration</string>
+    <string name="settings_key_color_change_on_touch">settings_key_color_change_on_touch</string>
     <string name="settings_key_show_links_first">settings_key_show_links_first</string>
     <string name="settings_key_app_version">settings_key_app_version</string>
     <string name="settings_key_build_info">settings_key_build_info</string>
@@ -13,6 +14,7 @@
     <string name="settings_key_support">settings_key_support</string>
     <string name="settings_key_licenses">settings_key_licenses</string>
     <string name="settings_title_color_change_duration">Color change duration</string>
+    <string name="settings_title_color_change_on_touch">Change color on touch</string>
     <string name="settings_title_show_links_first">Show links first</string>
     <string name="settings_title_app_version">App version</string>
     <string name="settings_title_build_info">Build info</string>
@@ -24,6 +26,7 @@
     <string name="settings_summary_licenses">Libraries used to create this app</string>
     <string name="settings_summary_build_info">Build Time: %1$s. Git Sha: %2$s</string>
     <string name="settings_summary_color_change_duration">The amount of time to display a color before switching</string>
+    <string name="settings_summary_color_change_on_touch">Change background color when touching wallpaper</string>
     <string name="support_email_subject_template">%1$s %2$s support</string>
 
     <string-array name="settings_entries_color_change_duration">

@@ -2,6 +2,7 @@ package com.dgsd.android.hexwall;
 
 import android.app.Application;
 import android.os.StrictMode;
+import android.support.v7.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -40,6 +41,8 @@ public class HWApp extends Application {
         appServicesComponent = DaggerAppServicesComponent.builder()
                 .hWModule(getModule())
                 .build();
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
 
@@ -48,7 +51,7 @@ public class HWApp extends Application {
     }
 
     void enableAppOnlyFunctionality() {
-        if (BuildConfig.CRASHLYTICS_ENABLED) {
+        if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics(), new Answers());
             Timber.plant(new CrashlyticsLogger());
         }
@@ -70,7 +73,7 @@ public class HWApp extends Application {
 
         StrictMode.enableDefaults();
 
-        if (BuildConfig.LEAK_CANARY_ENABLED && Api.isUpTo(Api.LOLLIPOP)) {
+        if (BuildConfig.DEBUG && Api.isUpTo(Api.LOLLIPOP)) {
             // LeakCanary causes a crash on M Developer Preview
             refWatcher = LeakCanary.install(this);
         }

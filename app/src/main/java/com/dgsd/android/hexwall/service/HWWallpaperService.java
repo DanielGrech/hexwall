@@ -59,10 +59,13 @@ public class HWWallpaperService extends WallpaperService {
 
         private long delayBetweenFrames = TimeUnit.SECONDS.toMillis(1);
 
+        private boolean changeColorOnTap = true;
+
         private HWEngine(SharedPreferences sharedPreferences) {
             this.sharedPreferences = sharedPreferences;
             this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
+            ensureChangeColorOnTap();
             ensureDelayBetweenFrames();
 
             bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
@@ -87,6 +90,10 @@ public class HWWallpaperService extends WallpaperService {
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
                 this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+                ensureChangeColorOnTap();
+                ensureDelayBetweenFrames();
+
                 handler.post(this);
             } else {
                 removeCallbacks();
@@ -103,12 +110,14 @@ public class HWWallpaperService extends WallpaperService {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (getString(R.string.settings_key_color_change_duration).equals(key)) {
                 ensureDelayBetweenFrames();
+            } else if (getString(R.string.settings_summary_color_change_on_touch).equals(key)) {
+                ensureChangeColorOnTap();
             }
         }
 
         @Override
         public Bundle onCommand(String action, int x, int y, int z, Bundle extras, boolean resultRequested) {
-            if (WallpaperManager.COMMAND_TAP.equals(action)) {
+            if (changeColorOnTap && WallpaperManager.COMMAND_TAP.equals(action)) {
                 touchOffset = RANDOM.nextInt((int) TimeUnit.DAYS.toMillis(1));
 
                 if (colorAnimInfo != null && colorAnimInfo.currentAnim != null) {
@@ -182,6 +191,11 @@ public class HWWallpaperService extends WallpaperService {
             } catch (NullPointerException | NumberFormatException ex) {
                 Timber.e(ex, "Error converting delay between background changes: %s", delayAsString);
             }
+        }
+
+        private void ensureChangeColorOnTap() {
+            changeColorOnTap = sharedPreferences.getBoolean(
+                    getString(R.string.settings_key_color_change_on_touch), changeColorOnTap);
         }
 
         private void redrawBackground() {
