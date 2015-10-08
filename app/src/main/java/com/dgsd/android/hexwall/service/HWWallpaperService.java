@@ -26,6 +26,7 @@ import timber.log.Timber;
 public class HWWallpaperService extends WallpaperService {
 
     private static final long DEFAULT_COLOR_CHANGE_ANIM_DURATION = 200; //ms
+    private static final int DEFAULT_COLOR_ALPHA = 200;
     private static final int OPAQUE = 255;
 
     private static final Random RANDOM = new Random();
@@ -162,7 +163,7 @@ public class HWWallpaperService extends WallpaperService {
 
         private int getNextTargetColor() {
             time.setTimeInMillis(System.currentTimeMillis() + touchOffset);
-            final int color = Color.rgb(
+            final int color = Color.argb(DEFAULT_COLOR_ALPHA,
                     getTimeFraction(time.get(Calendar.HOUR_OF_DAY), (int) TimeUnit.DAYS.toHours(1)),
                     getTimeFraction(time.get(Calendar.MINUTE), (int) TimeUnit.HOURS.toMinutes(1)),
                     getTimeFraction(time.get(Calendar.SECOND), (int) TimeUnit.MINUTES.toSeconds(1))
