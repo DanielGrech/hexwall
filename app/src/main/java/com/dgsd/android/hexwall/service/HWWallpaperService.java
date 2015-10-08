@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 
@@ -30,15 +31,10 @@ public class HWWallpaperService extends WallpaperService {
 
     private static final Random RANDOM = new Random();
 
-    private HWEngine engine;
-
     @Override
     public Engine onCreateEngine() {
-        final HWApp app = (HWApp) getApplication();
-        engine = new HWEngine(app.getAppServicesComponent().sharedPreferences());
-        return engine;
+        return new HWEngine(PreferenceManager.getDefaultSharedPreferences(this));
     }
-
 
     private class HWEngine extends WallpaperService.Engine
             implements Runnable, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -172,8 +168,6 @@ public class HWWallpaperService extends WallpaperService {
                     getTimeFraction(time.get(Calendar.MINUTE), (int) TimeUnit.HOURS.toMinutes(1)),
                     getTimeFraction(time.get(Calendar.SECOND), (int) TimeUnit.MINUTES.toSeconds(1))
             );
-
-            Timber.d("Setting color: %s", Integer.toHexString(color));
 
             return color;
         }

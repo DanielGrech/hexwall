@@ -9,7 +9,6 @@ public class CrashlyticsLogger extends Timber.Tree {
 
     public CrashlyticsLogger() {
         Crashlytics.setString("GIT_SHA", BuildConfig.GIT_SHA);
-        Crashlytics.setString("BUILD_NUMBER", BuildConfig.BUILD_NUMBER);
         Crashlytics.setString("BUILD_TIME", BuildConfig.BUILD_TIME);
     }
 
