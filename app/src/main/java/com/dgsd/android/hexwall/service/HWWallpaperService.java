@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 
-import com.dgsd.android.hexwall.HWApp;
 import com.dgsd.android.hexwall.R;
 
 import java.util.Calendar;
