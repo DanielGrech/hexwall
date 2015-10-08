@@ -3,10 +3,12 @@ package com.dgsd.android.hexwall.service;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.WallpaperManager;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
@@ -16,6 +18,7 @@ import com.dgsd.android.hexwall.R;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
@@ -24,6 +27,8 @@ public class HWWallpaperService extends WallpaperService {
 
     private static final long DEFAULT_COLOR_CHANGE_ANIM_DURATION = 200; //ms
     private static final int OPAQUE = 255;
+
+    private static final Random RANDOM = new Random();
 
     private HWEngine engine;
 
@@ -40,7 +45,7 @@ public class HWWallpaperService extends WallpaperService {
 
         private final SharedPreferences sharedPreferences;
 
-        private final Paint paint;
+        private final Paint bgPaint;
 
         private final Handler handler;
 
@@ -50,6 +55,8 @@ public class HWWallpaperService extends WallpaperService {
 
         private ColorAnimInfo colorAnimInfo;
 
+        private int touchOffset = 0;
+
         private long delayBetweenFrames = TimeUnit.SECONDS.toMillis(1);
 
         private HWEngine(SharedPreferences sharedPreferences) {
@@ -58,8 +65,8 @@ public class HWWallpaperService extends WallpaperService {
 
             ensureDelayBetweenFrames();
 
-            paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-            paint.setStyle(Paint.Style.FILL);
+            bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+            bgPaint.setStyle(Paint.Style.FILL);
 
             argbEvaluator = new ArgbEvaluator();
 
@@ -72,18 +79,14 @@ public class HWWallpaperService extends WallpaperService {
 
         @Override
         public void run() {
-            if (colorAnimInfo == null) {
-                colorAnimInfo = new ColorAnimInfo(paint.getColor(), getNextTargetColor());
-                colorAnimInfo.animate();
-            }
-
-            invalidate();
+            redrawBackground();
             handler.postDelayed(this, delayBetweenFrames);
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
+                this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
                 handler.post(this);
             } else {
                 removeCallbacks();
@@ -101,6 +104,21 @@ public class HWWallpaperService extends WallpaperService {
             if (getString(R.string.settings_key_color_change_duration).equals(key)) {
                 ensureDelayBetweenFrames();
             }
+        }
+
+        @Override
+        public Bundle onCommand(String action, int x, int y, int z, Bundle extras, boolean resultRequested) {
+            if (WallpaperManager.COMMAND_TAP.equals(action)) {
+                touchOffset = RANDOM.nextInt((int) TimeUnit.DAYS.toMillis(1));
+
+                if (colorAnimInfo != null && colorAnimInfo.currentAnim != null) {
+                    colorAnimInfo.currentAnim.cancel();
+                }
+                colorAnimInfo = null;
+                redrawBackground();
+            }
+
+            return super.onCommand(action, x, y, z, extras, resultRequested);
         }
 
         private void removeCallbacks() {
@@ -131,15 +149,15 @@ public class HWWallpaperService extends WallpaperService {
 
         private void draw(Canvas canvas) {
             if (colorAnimInfo != null) {
-                paint.setColor((int) argbEvaluator.evaluate(
+                bgPaint.setColor((int) argbEvaluator.evaluate(
                         colorAnimInfo.percentageDone, colorAnimInfo.startColor, colorAnimInfo.endColor));
             }
 
-            canvas.drawPaint(paint);
+            canvas.drawPaint(bgPaint);
         }
 
         private int getNextTargetColor() {
-            time.setTimeInMillis(System.currentTimeMillis());
+            time.setTimeInMillis(System.currentTimeMillis() + touchOffset);
             final int color = Color.rgb(
                     getTimeFraction(time.get(Calendar.HOUR_OF_DAY), (int) TimeUnit.DAYS.toHours(1)),
                     getTimeFraction(time.get(Calendar.MINUTE), (int) TimeUnit.HOURS.toMinutes(1)),
@@ -164,6 +182,15 @@ public class HWWallpaperService extends WallpaperService {
             } catch (NullPointerException | NumberFormatException ex) {
                 Timber.e(ex, "Error converting delay between background changes: %s", delayAsString);
             }
+        }
+
+        private void redrawBackground() {
+            if (colorAnimInfo == null) {
+                colorAnimInfo = new ColorAnimInfo(bgPaint.getColor(), getNextTargetColor());
+                colorAnimInfo.animate();
+            }
+
+            invalidate();
         }
 
         private class ColorAnimInfo {
