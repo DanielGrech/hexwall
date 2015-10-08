@@ -1,7 +1,3 @@
-def isCiBuild() {
-    def buildTag = System.getenv("BUILD_TAG")
-    return buildTag?.startsWith("jenkins") ? true : false
-}
 
 def getBuildTime() {
     return new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'").format(new Date())
@@ -35,20 +31,9 @@ def gitBranchName() {
     return branchName.replaceAll("/", "_").replaceAll(" ", "_")
 }
 
-def getCiBuildNumber() {
-    String buildNumber = System.getenv('BUILD_NUMBER');
-    if (buildNumber == null) {
-        return 'local'
-    } else {
-        return buildNumber
-    }
-}
-
 // Export our functions
 ext {
-    isCiBuild = this.&isCiBuild
     gitBranchName = this.&gitBranchName
-    getCiBuildNumber = this.&getCiBuildNumber
     getGitSha = this.&gitSha
     getBuildTime = this.&getBuildTime
 }
