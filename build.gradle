@@ -24,25 +24,25 @@ allprojects {
 subprojects {
     ext {
         config = [
-                appName : "HexWall",
-                applicationId : "com.dgsd.android.hexwall",
+                appName          : "HexWall",
+                applicationId    : "com.dgsd.android.hexwall",
 
-                compileSdkVersion : 23,
-                buildToolsVersion : "23.0.1",
-                minSdkVersion : 16,
+                compileSdkVersion: 23,
+                buildToolsVersion: "23.0.1",
+                minSdkVersion    : 16,
                 targetSdkVersion : 23,
 
-                versionCode : 1,
-                versionName : "1.0",
+                versionCode      : 1,
+                versionName      : "1.0",
 
-                releaseSigning : [
-                    storeFile : 'release.keystore',
-                    storePassword : System.getenv('RELEASE_STORE_PASSWORD'),
-                    alias : System.getenv('RELEASE_KEY_ALIAS'),
-                    aliasPassword: System.getenv('RELEASE_KEY_ALIAS_PASSWORD')
+                releaseSigning   : [
+                        storeFile    : System.getenv('DGSD_RELEASE_STORE_FILE'),
+                        storePassword: System.getenv('DGSD_RELEASE_STORE_PASSWORD'),
+                        alias        : System.getenv('DGSD_RELEASE_KEY_ALIAS'),
+                        aliasPassword: System.getenv('DGSD_RELEASE_KEY_PASSWORD')
                 ],
 
-                testOptions : {
+                testOptions      : {
                     events 'passed', 'failed'
                     displayGranularity 2
                     showExceptions true
@@ -53,10 +53,10 @@ subprojects {
         ]
 
         versions = [
-                androidSupport : "23.0.1",
-                timber : "3.1.0",
-                fabricClient : "2.5.2@aar",
-                licensesDialog : "1.8.0",
+                androidSupport: "23.0.1",
+                timber        : "3.1.0",
+                fabricClient  : "2.5.2@aar",
+                licensesDialog: "1.8.0",
         ]
     }
 }
